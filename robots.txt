@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://metaforasvisuais.com.br/sitemap.xml
+
+# Páginas importantes para indexação
+Allow: /index.html
+Allow: /nova-oferta/
+Allow: /obrigado.html
+
+# Bloquear arquivos desnecessários para SEO
+Disallow: /node_modules/
+Disallow: /api/
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /test-server.js
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /.env
+Disallow: /vercel.env.local
+
+# Permitir crawling de imagens
+Allow: /img/
+
+# Crawl-delay (opcional, para não sobrecarregar o servidor)
+Crawl-delay: 1
+
+# Informações adicionais
+# Site: Instituto de Psicoterapia Visual
+# Foco: Metáforas terapêuticas para psicólogos e terapeutas
+# Público-alvo: Profissionais de saúde mental 
