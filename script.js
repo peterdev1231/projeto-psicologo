@@ -130,6 +130,174 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Email autocomplete functionality
+function initEmailAutocomplete() {
+    const emailInput = document.getElementById('user-email');
+    if (!emailInput) return;
+
+    // Provedores populares no Brasil
+    const emailProviders = [
+        'gmail.com',
+        'hotmail.com',
+        'outlook.com',
+        'yahoo.com.br',
+        'yahoo.com',
+        'uol.com.br',
+        'bol.com.br',
+        'terra.com.br',
+        'ig.com.br',
+        'globo.com',
+        'r7.com',
+        'live.com',
+        'icloud.com',
+        'msn.com'
+    ];
+
+    let autocompleteContainer = null;
+
+    function createAutocompleteContainer() {
+        if (autocompleteContainer) return;
+        
+        autocompleteContainer = document.createElement('div');
+        autocompleteContainer.className = 'email-autocomplete';
+        autocompleteContainer.style.cssText = `
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        `;
+        
+        // Posicionar relativo ao input
+        emailInput.parentNode.style.position = 'relative';
+        emailInput.parentNode.appendChild(autocompleteContainer);
+    }
+
+    function showSuggestions(userInput) {
+        if (!userInput.includes('@')) {
+            hideAutocomplete();
+            return;
+        }
+
+        const [localPart, domainPart] = userInput.split('@');
+        if (!localPart || domainPart === undefined) {
+            hideAutocomplete();
+            return;
+        }
+
+        // Filtrar provedores que começam com o que o usuário digitou
+        const matchingProviders = emailProviders.filter(provider => 
+            provider.toLowerCase().startsWith(domainPart.toLowerCase())
+        );
+
+        if (matchingProviders.length === 0 || domainPart === '') {
+            // Se não há match ou usuário acabou de digitar @, mostrar todos
+            displaySuggestions(localPart, domainPart === '' ? emailProviders : []);
+        } else {
+            displaySuggestions(localPart, matchingProviders);
+        }
+    }
+
+    function displaySuggestions(localPart, providers) {
+        if (!autocompleteContainer) createAutocompleteContainer();
+        
+        autocompleteContainer.innerHTML = '';
+        
+        if (providers.length === 0) {
+            hideAutocomplete();
+            return;
+        }
+
+        // Limitar a 6 sugestões para não sobrecarregar
+        const limitedProviders = providers.slice(0, 6);
+        
+        limitedProviders.forEach(provider => {
+            const suggestion = document.createElement('div');
+            suggestion.className = 'email-suggestion';
+            suggestion.textContent = `${localPart}@${provider}`;
+            suggestion.style.cssText = `
+                padding: 12px 16px;
+                cursor: pointer;
+                border-bottom: 1px solid #f3f4f6;
+                transition: background-color 0.2s ease;
+                font-size: 14px;
+                color: #374151;
+            `;
+            
+            // Hover effect
+            suggestion.addEventListener('mouseenter', function() {
+                this.style.backgroundColor = '#f9fafb';
+            });
+            
+            suggestion.addEventListener('mouseleave', function() {
+                this.style.backgroundColor = '';
+            });
+            
+            // Click to select
+            suggestion.addEventListener('click', function() {
+                emailInput.value = this.textContent;
+                hideAutocomplete();
+                emailInput.focus();
+                
+                // Trigger validation
+                emailInput.dispatchEvent(new Event('input'));
+            });
+            
+            autocompleteContainer.appendChild(suggestion);
+        });
+        
+        autocompleteContainer.style.display = 'block';
+    }
+
+    function hideAutocomplete() {
+        if (autocompleteContainer) {
+            autocompleteContainer.style.display = 'none';
+        }
+    }
+
+    // Event listeners
+    emailInput.addEventListener('input', function(e) {
+        const value = e.target.value.trim();
+        showSuggestions(value);
+    });
+
+    emailInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideAutocomplete();
+        }
+        
+        // Navegação com setas (opcional - implementação básica)
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const suggestions = autocompleteContainer?.querySelectorAll('.email-suggestion');
+            if (suggestions && suggestions.length > 0) {
+                // Implementação básica - foca no primeiro item
+                suggestions[0].click();
+            }
+        }
+    });
+
+    // Esconder quando clicar fora
+    document.addEventListener('click', function(e) {
+        if (!emailInput.contains(e.target) && !autocompleteContainer?.contains(e.target)) {
+            hideAutocomplete();
+        }
+    });
+
+    // Esconder quando o input perde o foco (com delay para permitir cliques)
+    emailInput.addEventListener('blur', function() {
+        setTimeout(hideAutocomplete, 150);
+    });
+}
+
 // Show notification function
 function showNotification(message, type) {
     // Remove existing notifications
@@ -199,6 +367,7 @@ function observeElements() {
 // Initialize scroll animations on load
 document.addEventListener('DOMContentLoaded', function() {
     observeElements();
+    initEmailAutocomplete(); // Inicializar autocomplete de email
 });
 
 // Add hover effects to buttons
