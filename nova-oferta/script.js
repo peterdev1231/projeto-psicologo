@@ -635,3 +635,35 @@ function initAudioUnlocker() {
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
 }
+
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const name = params.get('name');
+    return { name };
+}
+
+function updateDynamicContent() {
+    const { name } = getUrlParams();
+    if (!name) return;
+
+    const capitalizedFirstName = name.charAt(0).toUpperCase() + name.slice(1);
+
+    // Atualiza todos os locais que usam o nome dinâmico
+    const nameElements = document.querySelectorAll('.dynamic-name, #surprise-name-1, #surprise-name-2');
+    nameElements.forEach(el => {
+        if (el) {
+            el.textContent = capitalizedFirstName;
+        }
+    });
+
+    const fromNameEl = document.getElementById('from-name');
+    if (fromNameEl) {
+        // Esta linha foi removida para manter o texto estático do HTML
+        // fromNameEl.textContent = `${capitalizedFirstName}, seu novo estrategista`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateDynamicContent();
+    // ... o restante do seu código
+});

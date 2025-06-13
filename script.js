@@ -560,13 +560,10 @@ function initializeCountdown() {
         const now = new Date();
         const deadline = new Date(now.getTime() + timeLeftMs);
         
-        const dayNames = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
-        const dayText = dayNames[now.getDay()];
-        
         const hours = deadline.getHours().toString().padStart(2, '0');
         const minutes = deadline.getMinutes().toString().padStart(2, '0');
         
-        return `hoje ${dayText} até ${hours}:${minutes}`;
+        return `${hours}:${minutes} de hoje`;
     }
     
     // Set the initial deadline date text (will be updated in countdown)
@@ -607,7 +604,7 @@ function initializeCountdown() {
                     
                     // Update mini counter text for urgency
                     document.querySelector('.countdown-mini').innerHTML = 
-                        `Últimos <span id="minutes-left" style="color: #ef4444; font-weight: 600;">${totalMinutesLeft}</span> minutos!`;
+                        `Últimos <span id="minutes-left" style="color: #ef4444; font-weight: 600;">${totalMinutesLeft}</span> min!`;
                 }
             }
             
