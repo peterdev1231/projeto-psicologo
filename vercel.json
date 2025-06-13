@@ -25,15 +25,5 @@
         }
       ]
     }
-  ],
-  "routes": [
-    {
-      "src": "/nova-oferta",
-      "dest": "/nova-oferta/index.html"
-    },
-    {
-      "src": "/nova-oferta/",
-      "dest": "/nova-oferta/index.html"
-    }
   ]
 } 
