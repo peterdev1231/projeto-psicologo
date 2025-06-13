@@ -1,4 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Função para disparar o evento de Lead para o Facebook Pixel
+    function trackFacebookLead() {
+        if (typeof fbq !== 'function') {
+            console.warn('Facebook Pixel (fbq) não encontrado. O evento de Lead não foi rastreado.');
+            return;
+        }
+
+        // Tenta recuperar os dados do lead do localStorage para melhorar a correspondência
+        const leadDataString = localStorage.getItem('leadData');
+        let leadData = {};
+
+        if (leadDataString) {
+            try {
+                const parsedData = JSON.parse(leadDataString);
+                // Prepara os dados para o Advanced Matching do Facebook
+                leadData = {
+                    em: parsedData.email, // Email
+                    fn: parsedData.name,   // First Name
+                };
+            } catch (e) {
+                console.error('Erro ao parsear dados do lead do localStorage:', e);
+            }
+        }
+        
+        // Dispara o evento 'Lead' com os dados de correspondência avançada
+        fbq('track', 'Lead', leadData);
+        console.log('Evento de Lead enviado para o Facebook Pixel.', leadData);
+    }
+
+    // Chama a função para rastrear o lead assim que a página carregar
+    trackFacebookLead();
+
     // Função centralizada para personalizar todos os nomes na página
     function personalizeAllNames() {
         try {
