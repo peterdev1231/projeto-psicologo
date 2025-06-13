@@ -1,4 +1,7 @@
 {
+  "buildCommand": "echo 'No build needed - static files'",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
   "functions": {
     "api/subscribe.js": {
       "maxDuration": 10
@@ -21,6 +24,16 @@
           "value": "Content-Type, Authorization"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/nova-oferta",
+      "dest": "/nova-oferta/index.html"
+    },
+    {
+      "src": "/nova-oferta/",
+      "dest": "/nova-oferta/index.html"
     }
   ]
 } 
