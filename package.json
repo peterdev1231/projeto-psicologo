@@ -6,8 +6,8 @@
     "test": "node test-server.js",
     "start": "python -m http.server 3000",
     "serve": "npx serve . -p 3000",
-    "dev-vercel": "vercel dev",
-    "build": "vercel build",
+    "dev": "vercel dev",
+    "build": "echo 'Build completed - static files ready'",
     "deploy": "vercel --prod"
   },
   "dependencies": {
