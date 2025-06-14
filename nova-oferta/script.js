@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const buyNowBtn = document.getElementById('buy-now-btn');
     const buyNowBtnFinal = document.getElementById('buy-now-btn-final');
     const skipOfferLink = document.getElementById('skip-offer-link');
+    const priceSectionCta = document.getElementById('price-section-cta');
 
     // URL do seu checkout (ex: Hotmart, Kiwify, etc.)
     const checkoutUrl = 'https://pay.hotmart.com/F100283965V?checkoutMode=10';
@@ -143,6 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (buyNowBtnFinal) {
         buyNowBtnFinal.addEventListener('click', () => {
             console.log('Redirecionando para o checkout (CTA Final)...');
+            window.location.href = getCheckoutUrlWithData();
+        });
+    }
+
+    if (priceSectionCta) {
+        priceSectionCta.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Redirecionando para o checkout (Price Section)...');
             window.location.href = getCheckoutUrlWithData();
         });
     }
