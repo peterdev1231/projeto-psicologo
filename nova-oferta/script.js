@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDynamicContent();
 
     const buyNowBtn = document.getElementById('buy-now-btn');
-    const buyNowBtnFinal = document.getElementById('buy-now-btn-final');
+    const finalCtaBtn = document.getElementById('final-page-cta');
     const skipOfferLink = document.getElementById('skip-offer-link');
     const priceSectionCta = document.getElementById('price-section-cta');
 
@@ -162,8 +162,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (buyNowBtnFinal) {
-        buyNowBtnFinal.addEventListener('click', () => {
+    if (finalCtaBtn) {
+        finalCtaBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             console.log('Redirecionando para o checkout (CTA Final)...');
             window.location.href = getCheckoutUrlWithData();
         });
