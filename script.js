@@ -52,8 +52,8 @@ document.addEventListener('keydown', function(e) {
 modalForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const nameInput = document.getElementById('user-name');
-    const emailInput = document.getElementById('user-email');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
     const submitBtn = document.querySelector('.modal-submit-btn');
     
     const name = nameInput.value.trim();
@@ -112,8 +112,9 @@ modalForm.addEventListener('submit', async function(e) {
                 timestamp: Date.now()
             }));
             
-            // Redireciona para a página de oferta com o nome como parâmetro
-            window.location.href = `nova-oferta/index.html?name=${encodeURIComponent(firstName)}`;
+            // Redireciona para a página de oferta com o nome e email como parâmetros
+            const redirectUrl = `nova-oferta/index.html?name=${encodeURIComponent(firstName)}&email=${encodeURIComponent(email)}`;
+            window.location.href = redirectUrl;
 
         } else {
             showNotification(data.message || 'Erro ao enviar. Tente novamente.', 'error');
@@ -132,8 +133,8 @@ modalForm.addEventListener('submit', async function(e) {
 
 // Rastreia a primeira interação com o formulário do modal
 function initFormInteractionTracking() {
-    const nameInput = document.getElementById('user-name');
-    const emailInput = document.getElementById('user-email');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
     let eventFired = false;
 
     const trackInteraction = () => {
@@ -161,7 +162,7 @@ function isValidEmail(email) {
 
 // Email autocomplete functionality
 function initEmailAutocomplete() {
-    const emailInput = document.getElementById('user-email');
+    const emailInput = document.getElementById('email');
     if (!emailInput) return;
 
     // Provedores populares no Brasil
