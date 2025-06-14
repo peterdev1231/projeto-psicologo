@@ -16,6 +16,12 @@ const secondsElement = document.getElementById('seconds');
 function openModal() {
     modalOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Dispara evento personalizado para o Facebook Pixel
+    if (typeof fbq === 'function') {
+        fbq('trackCustom', 'ClickToOpenModal');
+        console.log("Facebook Pixel: Evento 'ClickToOpenModal' disparado.");
+    }
 }
 
 function closeModal() {
@@ -123,6 +129,29 @@ modalForm.addEventListener('submit', async function(e) {
         submitBtn.disabled = false;
     }
 });
+
+// Rastreia a primeira interação com o formulário do modal
+function initFormInteractionTracking() {
+    const nameInput = document.getElementById('user-name');
+    const emailInput = document.getElementById('user-email');
+    let eventFired = false;
+
+    const trackInteraction = () => {
+        if (!eventFired && typeof fbq === 'function') {
+            fbq('trackCustom', 'FormInteraction');
+            console.log("Facebook Pixel: Evento 'FormInteraction' disparado.");
+            eventFired = true; // Garante que o evento só dispare uma vez
+            // Remove os listeners após o disparo para otimizar
+            nameInput.removeEventListener('input', trackInteraction);
+            emailInput.removeEventListener('input', trackInteraction);
+        }
+    };
+
+    if (nameInput && emailInput) {
+        nameInput.addEventListener('input', trackInteraction);
+        emailInput.addEventListener('input', trackInteraction);
+    }
+}
 
 // Email validation function
 function isValidEmail(email) {
@@ -364,10 +393,49 @@ function observeElements() {
     });
 }
 
+// Rastreamento avançado de profundidade de rolagem
+function initScrollDepthTracking() {
+    const checkpoints = [25, 50, 75, 90];
+    const trackedCheckpoints = [];
+
+    const handleScroll = () => {
+        const scrollHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const clientHeight = document.documentElement.clientHeight;
+        const scrollPercentage = (scrollTop / (scrollHeight - clientHeight)) * 100;
+
+        checkpoints.forEach(point => {
+            if (scrollPercentage >= point && !trackedCheckpoints.includes(point)) {
+                if (typeof fbq === 'function') {
+                    const eventName = `ScrollDepth_${point}`;
+                    fbq('trackCustom', eventName, { scroll_percentage: point });
+                    console.log(`Facebook Pixel: Evento '${eventName}' disparado.`);
+                }
+                trackedCheckpoints.push(point);
+            }
+        });
+
+        // Se todos os checkpoints foram atingidos, remove o listener para otimizar
+        if (trackedCheckpoints.length === checkpoints.length) {
+            window.removeEventListener('scroll', handleScroll);
+        }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+}
+
 // Initialize scroll animations on load
 document.addEventListener('DOMContentLoaded', function() {
     observeElements();
     initEmailAutocomplete(); // Inicializar autocomplete de email
+    initFormInteractionTracking(); // Inicia o rastreamento de interação com o formulário
+    initScrollDepthTracking(); // Inicia o rastreamento de profundidade de rolagem
+
+    // Dispara evento 'ViewContent' quando a página está pronta
+    if (typeof fbq === 'function') {
+        fbq('track', 'ViewContent');
+        console.log("Facebook Pixel: Evento 'ViewContent' disparado.");
+    }
 });
 
 // Add hover effects to buttons

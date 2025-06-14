@@ -31,35 +31,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Chama a função para rastrear o lead assim que a página carregar
     trackFacebookLead();
 
-    // Função centralizada para personalizar todos os nomes na página
-    function personalizeAllNames() {
+    // Função para personalizar o conteúdo da página com o nome do lead
+    function updateDynamicContent() {
         try {
             const urlParams = new URLSearchParams(window.location.search);
             const leadName = urlParams.get('name');
+            const firstName = leadName ? decodeURIComponent(leadName).trim().split(' ')[0] : 'Psi';
+            const capitalizedFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+
+            // Personaliza o título principal que pode conter HTML
+            const mainTitleElement = document.querySelector('.offer-hero h1');
+            if (mainTitleElement) {
+                mainTitleElement.innerHTML = mainTitleElement.innerHTML.replace('Psi,', `${capitalizedFirstName},`);
+            }
+
+            // Mapeamento de outros elementos a serem atualizados apenas com texto
+            const elementsToUpdate = {
+                'header-name': capitalizedFirstName,
+                'lead-name': capitalizedFirstName,
+                'surprise-name': capitalizedFirstName,
+                'surprise-name-2': capitalizedFirstName
+            };
+
+            // Adiciona a classe .dynamic-name a esta lista para ser atualizada
+            const dynamicNameElements = document.querySelectorAll('.dynamic-name');
+            dynamicNameElements.forEach(el => {
+                el.textContent = capitalizedFirstName;
+            });
+
+            for (const id in elementsToUpdate) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = elementsToUpdate[id];
+                }
+            }
+            
+            // Garante que a assinatura tenha o texto correto, independentemente da personalização
+            const fromNameElement = document.getElementById('from-name');
+            if(fromNameElement) {
+                fromNameElement.textContent = "De: Sua colega e mentora";
+            }
 
             if (leadName) {
-                const decodedName = decodeURIComponent(leadName).trim();
-                const firstName = decodedName.split(' ')[0];
-                const capitalizedFirstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-
-                // Mapeamento dos elementos a serem atualizados
-                const elementsToUpdate = {
-                    'header-name': capitalizedFirstName,
-                    'lead-name': capitalizedFirstName,
-                    'surprise-name': capitalizedFirstName,
-                    'surprise-name-2': capitalizedFirstName,
-                    'from-name': `${capitalizedFirstName}, seu novo estrategista`
-                };
-
-                for (const id in elementsToUpdate) {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        element.textContent = elementsToUpdate[id];
-                    }
-                }
                  console.log(`✔️ Nomes personalizados para: ${capitalizedFirstName}`);
             } else {
-                console.log("ℹ️ Nenhum parâmetro 'name' encontrado na URL para personalização.");
+                console.log("ℹ️ Nenhum parâmetro 'name' encontrado na URL. Usando fallback 'Psi'.");
             }
         } catch (error) {
             console.error('Erro ao personalizar nomes na página:', error);
@@ -67,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Chama a função de personalização no início
-    personalizeAllNames();
+    updateDynamicContent();
 
     const buyNowBtn = document.getElementById('buy-now-btn');
     const buyNowBtnFinal = document.getElementById('buy-now-btn-final');
@@ -667,35 +683,3 @@ function initAudioUnlocker() {
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
 }
-
-function getUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get('name');
-    return { name };
-}
-
-function updateDynamicContent() {
-    const { name } = getUrlParams();
-    if (!name) return;
-
-    const capitalizedFirstName = name.charAt(0).toUpperCase() + name.slice(1);
-
-    // Atualiza todos os locais que usam o nome dinâmico
-    const nameElements = document.querySelectorAll('.dynamic-name, #surprise-name-1, #surprise-name-2');
-    nameElements.forEach(el => {
-        if (el) {
-            el.textContent = capitalizedFirstName;
-        }
-    });
-
-    const fromNameEl = document.getElementById('from-name');
-    if (fromNameEl) {
-        // Esta linha foi removida para manter o texto estático do HTML
-        // fromNameEl.textContent = `${capitalizedFirstName}, seu novo estrategista`;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    updateDynamicContent();
-    // ... o restante do seu código
-});
