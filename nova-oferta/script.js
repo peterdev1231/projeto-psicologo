@@ -100,10 +100,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para construir URL do checkout com dados do lead
     function getCheckoutUrlWithData() {
         try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nameFromUrl = urlParams.get('name');
+            const emailFromUrl = urlParams.get('email');
+
+            // Prioriza dados da URL, pois são mais confiáveis no redirecionamento
+            if (nameFromUrl && emailFromUrl) {
+                const params = new URLSearchParams({
+                    email: emailFromUrl,
+                    name: nameFromUrl, // Hotmart usa 'name' para o nome completo
+                    first_name: nameFromUrl.split(' ')[0],
+                    utm_source: 'nova_oferta',
+                    utm_campaign: 'metaforas_visuais'
+                });
+                console.log('Dados da URL usados para o checkout.');
+                return `${checkoutUrl}&${params.toString()}`;
+            }
+
+            // Fallback para localStorage se os dados não estiverem na URL
             const leadData = localStorage.getItem('leadData');
             if (leadData) {
                 const data = JSON.parse(leadData);
-                // Adiciona os dados como parâmetros na URL do checkout
                 const params = new URLSearchParams({
                     email: data.email,
                     name: data.fullName,
@@ -112,12 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     utm_campaign: 'metaforas_visuais',
                     lead_timestamp: data.timestamp
                 });
-                return `${checkoutUrl}?${params.toString()}`;
+                console.log('Dados do localStorage usados para o checkout (fallback).');
+                return `${checkoutUrl}&${params.toString()}`;
             }
         } catch (error) {
-            console.error('Erro ao recuperar dados do lead:', error);
+            console.error('Erro ao construir URL do checkout:', error);
         }
-        return checkoutUrl; // Fallback para URL sem parâmetros
+        
+        // Se tudo falhar, retorna a URL base
+        console.log('Nenhum dado encontrado para pré-preenchimento.');
+        return checkoutUrl;
     }
 
     // Debug: Mostra dados do lead capturados
