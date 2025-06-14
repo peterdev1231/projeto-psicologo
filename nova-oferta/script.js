@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const skipOfferLink = document.getElementById('skip-offer-link');
 
     // URL do seu checkout (ex: Hotmart, Kiwify, etc.)
-    const checkoutUrl = 'https://pay.hotmart.com/B90967266M?checkoutMode=10';
+    const checkoutUrl = 'https://pay.hotmart.com/F100283965V?checkoutMode=10';
     let audioContext = null; // Para gerenciar o áudio desbloqueado pelo navegador
 
     // URL para onde o usuário vai se recusar a oferta (pode ser uma página de obrigado)
